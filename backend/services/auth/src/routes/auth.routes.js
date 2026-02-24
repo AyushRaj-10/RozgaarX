@@ -1,4 +1,4 @@
-import { register , login , logout , getProfile} from "../controllers/user.controllers.js";
+import { register , login , logout , getProfile} from "../controllers/auth.controllers.js";
 import { verifyToken } from "../middlewares/auth.middleware.js";
 import express from "express";
 
