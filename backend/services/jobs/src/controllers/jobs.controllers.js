@@ -10,15 +10,41 @@ export const getJobs = async (req, res) => {
 }
 
 export const createJobHandler = async (req, res) => {
-    try { 
-        const { title, description, company, location, salary_min, salary_max, job_type, experience_level, skills, created_by } = req.body;
-        const newJob = await createJob(title, description, company, location, salary_min, salary_max, job_type, experience_level, skills, created_by);
+    try {
+
+        const {
+            title,
+            description,
+            company,
+            location,
+            salary_min,
+            salary_max,
+            job_type,
+            experience_level,
+            skills
+        } = req.body;
+
+        const created_by = req.user.id; 
+
+        const newJob = await createJob(
+            title,
+            description,
+            company,
+            location,
+            salary_min,
+            salary_max,
+            job_type,
+            experience_level,
+            skills,
+            created_by
+        );
+
         res.status(201).json(newJob);
-    }
-    catch (error) {
+
+    } catch (error) {
         res.status(500).json({ error: error.message });
     }
-}
+};
 
 export const getJobHandler = async (req, res) => {  
     try {
