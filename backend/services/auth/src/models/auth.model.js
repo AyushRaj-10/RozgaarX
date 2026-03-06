@@ -1,12 +1,12 @@
 import { db } from "../config/db.js";
 
-export const createUser = async(username, email , password) => {
+export const createUser = async(username, email , password , role) => {
     const query = `
-    INSERT INTO auth (username, email, password)
-    VALUES ($1, $2, $3)
+    INSERT INTO auth (username, email, password , role)
+    VALUES ($1, $2, $3, $4)
     RETURNING *
     `;
-    return await db.query(query, [username, email, password]);
+    return await db.query(query, [username, email, password, role]);
 }
 
 export const getUserByEmail = async(email) => {
