@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 export const register = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, role } = req.body;
 
   try {
     const existingUser = await getUserByEmail(email);
@@ -16,7 +16,13 @@ export const register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const userResult = await createUser(username, email, hashedPassword);
+    if (!["user", "recruiter"].includes(role)) {
+      return res.status(400).json({
+        message: "Invalid role",
+      });
+    }
+
+    const userResult = await createUser(username, email, hashedPassword, role);
 
     const user = userResult.rows[0];
 
@@ -24,6 +30,7 @@ export const register = async (req, res) => {
       {
         id: user.id,
         email: user.email,
+        role: user.role,
       },
       process.env.JWT_SECRET,
       {
@@ -40,6 +47,7 @@ export const register = async (req, res) => {
         id: user.id,
         username: user.username,
         email: user.email,
+        role: user.role,
       },
     });
   } catch (error) {
@@ -76,6 +84,7 @@ export const login = async (req, res) => {
       {
         id: user.id,
         email: user.email,
+        role: user.role,
       },
       process.env.JWT_SECRET,
       {
@@ -92,6 +101,7 @@ export const login = async (req, res) => {
         id: user.id,
         username: user.username,
         email: user.email,
+        role: user.role,
       },
     });
   } catch (error) {
