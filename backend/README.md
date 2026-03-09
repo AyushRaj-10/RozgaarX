@@ -1,6 +1,6 @@
 # Backend Services (Job Project)
 
-This `backend` folder contains the Node.js/Express microservices for the Job project. Each domain is implemented as an independent service under `services/`, with a reserved `gateway/` folder for a future API gateway or aggregation layer.
+This `backend` folder contains the Node.js/Express microservices for the Job project. Each domain is implemented as an independent service under `services/`, and an API Gateway under `gateway/` is used as the single public entry point.
 
 ## Contents
 
@@ -17,7 +17,7 @@ This `backend` folder contains the Node.js/Express microservices for the Job pro
 
 ```text
 backend/
-  gateway/                 # Reserved for API gateway (currently empty)
+  gateway/                 # API Gateway (routing, auth, rate limiting)
   services/
     application/           # Application-related APIs
     auth/                  # Authentication & authorization APIs
@@ -48,8 +48,13 @@ services/<service-name>/
 
 ## Services Overview
 
-- **Application service (`services/application`)**: Handles general application-level APIs (e.g. high-level operations tying multiple domains together).
-- **Auth service (`services/auth`)**: Manages user authentication and authorization, including JWT handling. Contains an `env.example` file for reference.
+- **Gateway (`gateway`)**:
+  - Single entry point for clients.
+  - Proxies requests to downstream services via `http-proxy-middleware`.
+  - Adds security headers (`helmet`), CORS, logging (`morgan`), and rate limiting (`express-rate-limit`).
+  - Performs JWT verification for protected routes before forwarding.
+- **Application service (`services/application`)**: Handles application-level operations and job applications.
+- **Auth service (`services/auth`)**: Manages user registration, login, logout, and profile; issues JWTs. Contains an `env.example` file for reference.
 - **Jobs service (`services/jobs`)**: Manages job-related data such as postings, listings, and related queries.
 - **User service (`services/user`)**: Manages user accounts, profiles, and related user data.
 
@@ -85,20 +90,44 @@ All services are standard Node.js applications using:
 
 ## Running the Services
 
-There is no global orchestrator yet; each service is run individually.
+There is no global orchestrator yet; each service and the gateway are run individually.
 
 From the repository root:
 
 ```bash
-cd backend/services/<service-name>
-# Option A: if you add/start script to package.json
-npm run start
+# Auth service (default PORT 8080)
+cd backend/services/auth
+node src/server.js
 
-# Option B: run directly with Node (current setup)
+# User service (expected via gateway at SERVICES.USER)
+cd ../user
+node src/server.js
+
+# Jobs service (expected via gateway at SERVICES.JOBS)
+cd ../jobs
+node src/server.js
+
+# Application service (expected via gateway at SERVICES.APPLICATION)
+cd ../application
+node src/server.js
+
+# API Gateway (default PORT 8084)
+cd ../../gateway
 node src/server.js
 ```
 
-Repeat this for each service you want running (`application`, `auth`, `jobs`, `user`).
+The gateway uses the base URLs defined in `gateway/src/config/index.js`:
+
+```js
+export const SERVICES = {
+  AUTH: "http://localhost:8080",
+  USER: "http://localhost:8081",
+  JOBS: "http://localhost:8082",
+  APPLICATION: "http://localhost:8083",
+};
+```
+
+Make sure the services listen on these ports (or update the config accordingly).
 
 ## Environment Variables
 
@@ -108,14 +137,19 @@ Each service expects its own `.env` file in its root (same level as `package.jso
 - JWT secret and token expiration settings (for the auth service)
 - Ports and hostnames for each service
 
-Consult the `env.example` file in `services/auth` as a reference and mirror similar keys for the other services as needed.
+The gateway also has its own `.env` file. **Important:** the `JWT_SECRET` value used by the gateway must match the one used by the auth service so that tokens issued by auth can be validated at the gateway.
+
+Consult the `env.example` file in `services/auth` as a reference and mirror similar keys for the other services and the gateway as needed.
 
 ## Development Notes
 
 - Code is organized by domain per service and by layer within `src/` (config, controllers, models, routes, etc.).
 - SQL scripts live in `src/sql/` for each service; database access is commonly wired through modules in `src/config/`.
-- Routes in `src/routes/` mount controllers and middlewares, and `src/server.js` is the entry point that boots the Express app.
-- The `gateway/` folder is currently empty and reserved for a future API gateway or aggregation service.
+- Routes in `src/routes/` mount controllers and middlewares, and `src/server.js` is the entry point that boots the Express app for each service.
+- The API Gateway (`gateway/`):
+  - Uses `src/server.js` to configure security, logging, rate limiting, and mount `src/routes/proxyRoutes.js`.
+  - Uses `src/config/index.js` to define base URLs for each downstream service.
+  - Uses middleware in `src/middleware/` (e.g. `authMiddleware.js`, `roleMiddleware.js`) for authentication and authorization before proxying.
 
 ## Contributing
 

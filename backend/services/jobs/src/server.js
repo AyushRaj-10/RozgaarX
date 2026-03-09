@@ -11,9 +11,6 @@ const PORT = process.env.PORT || 8080;
 
 const app = express();
 
-console.log("ENV PATH:", process.cwd());
-console.log("DATABASE:", process.env.DATABASE_URL_AUTH);
-
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
