@@ -63,3 +63,25 @@ export const deleteJob = async (id) => {
     const values = [id];
     await db.query(query, values);
 }
+
+export const searchJobs = async (keyword) => {
+
+    const query = `
+    SELECT * FROM jobs
+    WHERE
+    title ILIKE $1
+    OR description ILIKE $1
+    OR company ILIKE $1
+    OR location ILIKE $1
+    OR EXISTS (
+        SELECT 1 FROM unnest(skills) s WHERE s ILIKE $1
+    )
+    ORDER BY created_at DESC
+    `;
+
+    const values = [`%${keyword}%`];
+
+    const { rows } = await db.query(query, values);
+
+    return rows;
+};

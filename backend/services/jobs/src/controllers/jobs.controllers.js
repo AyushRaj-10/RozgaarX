@@ -1,4 +1,4 @@
-import { getAllJobs, createJob, updateJob , getJobById , deleteJob } from "../models/jobs.models.js";
+import { getAllJobs, createJob, updateJob , getJobById , deleteJob , searchJobs} from "../models/jobs.models.js";
 
 export const getJobs = async (req, res) => {
     try {
@@ -88,3 +88,20 @@ export const deleteJobHandler = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 }
+
+export const searchJobsController = async (req, res) => {
+    try {
+
+        const { keyword, page = 1 } = req.query;
+
+        const limit = 10;
+        const offset = (page - 1) * limit;
+
+        const jobs = await searchJobs(keyword, limit, offset);
+
+        res.status(200).json(jobs);
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
