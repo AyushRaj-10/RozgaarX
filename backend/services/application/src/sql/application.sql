@@ -6,7 +6,7 @@ CREATE TABLE applications (
 
     resume_url TEXT,
     status VARCHAR(50) DEFAULT 'applied' 
-    CHECK (status IN ('applied','shortlisted','rejected','accepted'))
+    CHECK (status IN ('applied','shortlisted','rejected','accepted')),
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

@@ -1,4 +1,4 @@
-import { getJobHandler, getJobs, createJobHandler, updateJobHandler, deleteJobHandler} from "../controllers/jobs.controllers.js";
+import { getJobHandler, getJobs, createJobHandler, updateJobHandler, deleteJobHandler, searchJobsController} from "../controllers/jobs.controllers.js";
 import express from "express";
 import { roleMiddleware } from "../middleware/role.middleware.js";
 import { verifyToken } from "../middleware/auth.middleware.js";
@@ -12,6 +12,8 @@ router.post(
   roleMiddleware(["recruiter"]),
   createJobHandler
 );
+
+router.get("/search", searchJobsController);
 
 router.get("/:id", getJobHandler);
 
