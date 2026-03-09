@@ -31,3 +31,14 @@ export const getApplicationsByJobId = async (jobId) => {
   return rows;
 };      
 
+export const updateApplication = async (applicationId, status) => {
+  const query = `
+    UPDATE applications
+    SET status = $1
+    WHERE id = $2
+    RETURNING *;
+  `;
+  const values = [status, applicationId];
+  const { rows } = await db.query(query, values);
+  return rows[0];
+}
