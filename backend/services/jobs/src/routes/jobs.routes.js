@@ -2,6 +2,7 @@ import { getJobHandler, getJobs, createJobHandler, updateJobHandler, deleteJobHa
 import express from "express";
 import { roleMiddleware } from "../middleware/role.middleware.js";
 import { verifyToken } from "../middleware/auth.middleware.js";
+import { rateLimiter } from "../middleware/rateLimiter.js";
 
 const router = express.Router();
 router.get("/", getJobs);
@@ -10,6 +11,7 @@ router.post(
   "/",
   verifyToken,
   roleMiddleware(["recruiter"]),
+  rateLimiter,
   createJobHandler
 );
 
@@ -28,6 +30,7 @@ router.delete(
   "/:id",
   verifyToken,
   roleMiddleware(["recruiter"]),
+  rateLimiter,
   deleteJobHandler
 );
 
