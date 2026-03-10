@@ -1,4 +1,5 @@
 import { getAllJobs, createJob, updateJob , getJobById , deleteJob , searchJobs} from "../models/jobs.models.js";
+import redisClient from "../config/redis.js";
 
 export const getJobs = async (req, res) => {
     try {
@@ -94,10 +95,24 @@ export const searchJobsController = async (req, res) => {
 
         const { keyword, page = 1 } = req.query;
 
+        const cacheKey = `search:${keyword}:${page}`;
+        const cached = await redisClient.get(cacheKey);
+
+        if(cached){
+            console.log("Cache hit");
+            return res.json(JSON.parse(cached));
+        }
+
+        console.log("Cache Miss")
+
         const limit = 10;
         const offset = (page - 1) * limit;
 
         const jobs = await searchJobs(keyword, limit, offset);
+
+        await redisClient.set(cacheKey, JSON.stringify(jobs), {
+            EX: 60
+        });
 
         res.status(200).json(jobs);
 
