@@ -6,6 +6,13 @@ import express from "express";
 import { db } from "./config/db.js";
 import applicationRoutes from "./routes/application.routes.js";
 
+import { connectProducer, connectConsumer, startConsumer } from "./kafka/producers.js";
+
+// Connect to Kafka
+connectProducer();
+connectConsumer();
+startConsumer();
+
 
 
 const PORT = process.env.PORT || 8080;

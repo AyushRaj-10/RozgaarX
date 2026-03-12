@@ -1,5 +1,7 @@
 import { getAllJobs, createJob, updateJob , getJobById , deleteJob , searchJobs} from "../models/jobs.models.js";
 import redisClient from "../config/redis.js";
+import { producer } from "../kafka/producers.js";
+import { TOPICS } from "../kafka/topics.js";
 
 export const getJobs = async (req, res) => {
     try {
@@ -26,6 +28,26 @@ export const createJobHandler = async (req, res) => {
         } = req.body;
 
         const created_by = req.user.id; 
+
+        await producer.send({
+            topic: TOPICS.JOB_CREATED,
+            messages: [
+                {
+                    value: JSON.stringify({
+                        title,
+                        description,
+                        company,
+                        location,
+                        salary_min,
+                        salary_max,
+                        job_type,
+                        experience_level,
+                        skills,
+                        created_by
+                    })
+                }
+            ]
+        })
 
         const newJob = await createJob(
             title,

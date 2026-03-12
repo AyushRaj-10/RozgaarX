@@ -1,5 +1,9 @@
 import { createApplication, getApplicationsByUserId , getApplicationsByJobId, updateApplication } from "../models/application.models.js";
 
+import { producer } from "../kafka/producers.js";
+import { TOPICS } from "../kafka/topics.js";
+
+
 export const applyForJob = async (req, res) => {
   try {
 
@@ -7,6 +11,20 @@ export const applyForJob = async (req, res) => {
     const { jobId, resumeUrl } = req.body;
 
     const application = await createApplication(userId, jobId, resumeUrl);
+
+    await producer.send({
+      topic: TOPICS.APPLICATION_CREATED,
+      messages: [
+        {
+          value: JSON.stringify({
+            applicationId: application.id,
+            userId,
+            jobId,
+            resumeUrl
+          }),
+        },
+      ],
+    });
 
     res.status(201).json(application);
 
