@@ -1,6 +1,8 @@
 import { createUser, getUserByEmail } from "../models/auth.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { TOPICS } from "../kafka/topics.js";
+import { producer } from "../kafka/producers.js";
 
 export const register = async (req, res) => {
   const { username, email, password, role } = req.body;
@@ -25,6 +27,20 @@ export const register = async (req, res) => {
     const userResult = await createUser(username, email, hashedPassword, role);
 
     const user = userResult.rows[0];
+
+   await producer.send({
+  topic: TOPICS.USER_CREATED,
+  messages: [
+    {
+      value: JSON.stringify({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      }),
+    },
+  ],
+});
 
     const token = jwt.sign(
       {

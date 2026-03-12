@@ -5,7 +5,11 @@ import cors from "cors";
 import express from "express";
 import { db } from "./config/db.js";
 import jobRoutes from "./routes/jobs.routes.js";
+import { connectProducer, connectConsumer } from "./kafka/producers.js";
 
+// Connect to Kafka
+connectProducer();
+connectConsumer();
 
 const PORT = process.env.PORT || 8080;
 
