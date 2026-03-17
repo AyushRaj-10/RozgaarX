@@ -9,6 +9,7 @@ export const connectProducer = async() => {
         console.log("Kafka producer connected");
     } catch (error) {
         console.error("Error connecting Kafka producer:", error);
+        throw error;
     }
 }
 
@@ -18,8 +19,9 @@ export const connectConsumer = async() => {
         console.log("Kafka consumer connected");
     } catch (error) {
         console.error("Error connecting Kafka consumer:", error);
+        throw error;
     }
-}   
+}
 
 export const startConsumer = async () => {
   await consumer.subscribe({ topic: "application.created" });
