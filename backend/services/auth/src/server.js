@@ -10,23 +10,33 @@ import { connectProducer } from "./kafka/producers.js";
 const PORT = process.env.PORT || 8080;
 
 const app = express();
-await connectProducer();
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/auth", authRoutes);
 
-// Test DB connection
-db.query("SELECT NOW()")
-.then(() => {
- console.log("Connected to database successfully ✅");
-})
-.catch((err) => {
- console.error("Error connecting to database ❌:", err);
-});
 
+// ✅ Proper startup flow
+const startServer = async () => {
+  try {
+    // ✅ Connect Kafka first
+    await connectProducer();
+    console.log("✅ Kafka connected");
 
-app.listen(PORT, () => {
- console.log(`Server is running on port ${PORT}`);
-});
+    // ✅ Test DB
+    await db.query("SELECT NOW()");
+    console.log("✅ Database connected");
+
+    // ✅ Start server
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
+
+  } catch (error) {
+    console.error("❌ Startup error:", error);
+    process.exit(1);
+  }
+};
+
+startServer();
