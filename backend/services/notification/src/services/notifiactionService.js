@@ -2,15 +2,18 @@ import { sendEmail } from "../provider/sendEmail.js";
 import logger from "../utils/logger.js";
 
 export const sendApplicationEmail = async (application) => {
+  try {
+    const { userId, jobId, email } = application;
 
-  const { userId, jobId, email } = application;
+    const subject = "New Job Application";
+    const body = `User ${userId} applied for job ${jobId}`;
 
-  const subject = "New Job Application";
-  const body = `User ${userId} applied for job ${jobId}`;
+    await sendEmail(email, subject, body);
 
-  await sendEmail(email, subject, body);
-
-  logger.info(`Application email sent to ${email} for job ${jobId}`);
+    logger.info(`Application email sent to ${email} for job ${jobId}`);
+  } catch (error) {
+    logger.error(`Failed to send application email: ${error.message}`);
+  }
 };
 
 export const sendAuthEmail = async (user) => {
