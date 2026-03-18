@@ -4,6 +4,8 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import rateLimit from "express-rate-limit";
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./config/swagger.js";
 
 import proxyRoutes from "./routes/proxyRoutes.js";
 
@@ -18,6 +20,7 @@ app.use(helmet());
 app.use(cors());
 
 app.use("/", proxyRoutes);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 /**
  * Logging
