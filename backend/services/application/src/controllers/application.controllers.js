@@ -2,7 +2,7 @@ import { createApplication, getApplicationsByUserId , getApplicationsByJobId, up
 
 import { producer } from "../kafka/producers.js";
 import { TOPICS } from "../kafka/topics.js";
-import redisClient from "../../../jobs/src/config/redis.js";
+import redisClient from "../config/redis.js"
 import logger from "../utils/logger.js";
 
 

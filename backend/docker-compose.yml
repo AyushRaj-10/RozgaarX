@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   redis:
     image: redis:7
@@ -7,6 +5,10 @@ services:
     ports:
       - "6379:6379"
     restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 5
 
   postgres:
     image: postgres:15
@@ -18,9 +20,13 @@ services:
     ports:
       - "5432:5432"
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      retries: 5
 
   zookeeper:
-    image: confluentinc/cp-zookeeper:latest
+    image: confluentinc/cp-zookeeper:7.4.0
     container_name: job-zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
@@ -35,9 +41,90 @@ services:
       - zookeeper
     ports:
       - "9092:9092"
+    restart: always
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: job-zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+
+      # Critical fix
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://job-kafka:9092
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+
+  auth:
+    build: ./services/auth
+    container_name: auth-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    env_file:
+      - ./services/auth/.env
+    restart: always
+
+  user:
+    build: ./services/user
+    container_name: user-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    env_file:
+      - ./services/user/.env
+    restart: always
+
+  jobs:
+    build: ./services/jobs
+    container_name: jobs-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    env_file:
+      - ./services/jobs/.env
+    restart: always
+
+  application:
+    build: ./services/application
+    container_name: application-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    env_file:
+      - ./services/application/.env
+    restart: always
+
+  gateway:
+    build: ./gateway
+    container_name: api-gateway
+    ports:
+      - "8084:8084"
+    depends_on:
+      - auth
+      - user
+      - jobs
+      - application
+    env_file:
+      - ./gateway/.env
+    restart: always

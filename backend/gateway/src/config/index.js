@@ -1,6 +1,6 @@
 export const SERVICES = {
-  AUTH: "http://localhost:8080",
-  USER: "http://localhost:8081",
-  JOBS: "http://localhost:8082",
-  APPLICATION: "http://localhost:8083",
+  AUTH: process.env.AUTH_SERVICE_URL || "http://localhost:8080",
+  USER: process.env.USER_SERVICE_URL || "http://localhost:8081",
+  JOBS: process.env.JOBS_SERVICE_URL || "http://localhost:8082",
+  APPLICATION: process.env.APPLICATION_SERVICE_URL || "http://localhost:8083",
 };

@@ -6,7 +6,7 @@ import express from "express";
 import { db } from "./config/db.js";
 import userRoutes from "./routes/user.routes.js";
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8081;
 
 const app = express();
 

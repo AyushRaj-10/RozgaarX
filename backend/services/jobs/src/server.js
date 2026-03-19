@@ -11,7 +11,7 @@ import { connectProducer, connectConsumer } from "./kafka/producers.js";
 await connectProducer();
 await connectConsumer();
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8082;
 
 const app = express();
 

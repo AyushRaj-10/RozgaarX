@@ -36,16 +36,17 @@ export const getJobs = async (req, res) => {
     const jobs = await getAllJobs(limit, offset);
 
     const response = {
-  data: jobs,
-  page: pageNumber,
-};
+      data: jobs,
+      page: pageNumber,
+    };
 
     await redisClient.set(cacheKey, JSON.stringify(response), {
       EX: 60 * 5,
     });
 
-    res.json({response});
+    res.json(response);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -180,10 +181,7 @@ export const searchJobsController = async (req, res) => {
 
     logger.info("Cache Miss");
 
-    const pageNumber = parseInt(page) || 1;
-    const offset = (pageNumber - 1) * limit;
-
-    const jobs = await searchJobs(keyword, limit, offset);
+    const jobs = await searchJobs(keyword);
 
     await redisClient.set(cacheKey, JSON.stringify(jobs), {
       EX: 60 * 3,
