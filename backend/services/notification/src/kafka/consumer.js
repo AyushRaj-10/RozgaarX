@@ -7,16 +7,24 @@ import { handleApplicationCreated } from "../handler/applicationCreated.js";
 
 const consumer = kafka.consumer({ groupId: "notification-service-group" });
 
+let isConsumerRunning = false;
+
 export const startConsumer = async () => {
+    if (isConsumerRunning) {
+        console.log("⚠️ Consumer already running, skipping...");
+        return;
+    }
+
     await consumer.connect();
 
-    await consumer.subscribe({topic: TOPICS.USER_CREATED});
-    await consumer.subscribe({topic: TOPICS.JOB_CREATED});
-    await consumer.subscribe({topic: TOPICS.APPLICATION_CREATED});
+    await consumer.subscribe({ topic: TOPICS.USER_CREATED });
+    await consumer.subscribe({ topic: TOPICS.JOB_CREATED });
+    await consumer.subscribe({ topic: TOPICS.APPLICATION_CREATED });
 
     await consumer.run({
-        eachMessage: async ({ topic, partition, message }) => {
+        eachMessage: async ({ topic, message }) => {
             const data = JSON.parse(message.value.toString());
+
             switch (topic) {
                 case TOPICS.USER_CREATED:
                     await handleUserCreated(data);
@@ -30,7 +38,8 @@ export const startConsumer = async () => {
                 default:
                     console.warn(`No handler for topic: ${topic}`);
             }
-        }    
-    })
+        }
+    });
 
-}
+    isConsumerRunning = true;
+};

@@ -1,8 +1,8 @@
 import { db } from "../config/db.js";
 
-export const getAllJobs = async () => {
-  const query = "SELECT * FROM jobs";
-  const { rows } = await db.query(query);
+export const getAllJobs = async (limit, offset) => {
+  const query = "SELECT * FROM jobs LIMIT $1 OFFSET $2";
+  const { rows } = await db.query(query, [limit, offset]);
   return rows;
 };
 
@@ -65,23 +65,22 @@ export const deleteJob = async (id) => {
 }
 
 export const searchJobs = async (keyword) => {
-
-    const query = `
+  const query = `
     SELECT * FROM jobs
     WHERE
-    title ILIKE $1
-    OR description ILIKE $1
-    OR company ILIKE $1
-    OR location ILIKE $1
-    OR EXISTS (
+      title ILIKE $1
+      OR description ILIKE $1
+      OR company ILIKE $1
+      OR location ILIKE $1
+      OR EXISTS (
         SELECT 1 FROM unnest(skills) s WHERE s ILIKE $1
-    )
+      )
     ORDER BY created_at DESC
-    `;
+  `;
 
-    const values = [`%${keyword}%`];
+  const values = [`%${keyword}%`];
 
-    const { rows } = await db.query(query, values);
+  const { rows } = await db.query(query, values);
 
-    return rows;
+  return rows;
 };
