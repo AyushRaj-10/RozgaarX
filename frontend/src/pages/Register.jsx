@@ -1,9 +1,12 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext.jsx";
 import { Eye, EyeOff, Mail, Lock, User, ShieldCheck, Zap } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const { createUser } = useContext(AuthContext);
+
+  const navigate = useNavigate();
 
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -31,6 +34,7 @@ const Register = () => {
     try {
       await createUser(formData);
       console.log("User registered successfully");
+      navigate("/");
     } catch (err) {
       setError("Registration failed. Please try again.");
       console.error(err);
