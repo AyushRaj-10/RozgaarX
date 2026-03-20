@@ -1,8 +1,13 @@
 import React from 'react'
-
+import {BrowserRouter,Routes,Route} from "react-router-dom"
+import Register from './pages/Register.jsx'
 const App = () => {
   return (
-    <div className='text-red-500'>App</div>
+    <BrowserRouter> 
+    <Routes>
+      <Route path="/register" element={<Register />}/>
+    </Routes>
+    </BrowserRouter>
   )
 }
 

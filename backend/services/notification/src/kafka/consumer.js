@@ -10,36 +10,56 @@ const consumer = kafka.consumer({ groupId: "notification-service-group" });
 let isConsumerRunning = false;
 
 export const startConsumer = async () => {
-    if (isConsumerRunning) {
-        console.log("⚠️ Consumer already running, skipping...");
-        return;
-    }
+  if (isConsumerRunning) {
+    console.log("⚠️ Consumer already running, skipping...");
+    return;
+  }
 
-    await consumer.connect();
+  while (true) {
+    try {
+      console.log("⏳ Connecting to Kafka...");
 
-    await consumer.subscribe({ topic: TOPICS.USER_CREATED });
-    await consumer.subscribe({ topic: TOPICS.JOB_CREATED });
-    await consumer.subscribe({ topic: TOPICS.APPLICATION_CREATED });
+      await consumer.connect();
 
-    await consumer.run({
+      console.log("✅ Connected to Kafka");
+
+      await consumer.subscribe({
+        topic: TOPICS.USER_CREATED,
+        fromBeginning: true,
+      });
+
+      await consumer.subscribe({ topic: TOPICS.JOB_CREATED });
+      await consumer.subscribe({ topic: TOPICS.APPLICATION_CREATED });
+
+      await consumer.run({
         eachMessage: async ({ topic, message }) => {
-            const data = JSON.parse(message.value.toString());
+          const data = JSON.parse(message.value.toString());
 
-            switch (topic) {
-                case TOPICS.USER_CREATED:
-                    await handleUserCreated(data);
-                    break;
-                case TOPICS.JOB_CREATED:
-                    await handleJobCreated(data);
-                    break;
-                case TOPICS.APPLICATION_CREATED:
-                    await handleApplicationCreated(data);
-                    break;
-                default:
-                    console.warn(`No handler for topic: ${topic}`);
-            }
-        }
-    });
+          console.log("📩 Event received:", topic, data);
 
-    isConsumerRunning = true;
+          switch (topic) {
+            case TOPICS.USER_CREATED:
+              await handleUserCreated(data);
+              break;
+            case TOPICS.JOB_CREATED:
+              await handleJobCreated(data);
+              break;
+            case TOPICS.APPLICATION_CREATED:
+              await handleApplicationCreated(data);
+              break;
+            default:
+              console.warn(`No handler for topic: ${topic}`);
+          }
+        },
+      });
+
+      console.log("✅ Consumer running");
+      isConsumerRunning = true;
+      break;
+
+    } catch (err) {
+      console.error("❌ Kafka not ready, retrying in 3s...", err.message);
+      await new Promise((res) => setTimeout(res, 3000));
+    }
+  }
 };
