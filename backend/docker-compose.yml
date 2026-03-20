@@ -128,3 +128,10 @@ services:
     env_file:
       - ./gateway/.env
     restart: always
+  notification-service:
+    build: ./services/notification
+    container_name: notification-service
+    depends_on:
+        - kafka
+    environment:
+    - KAFKA_BROKER=job-kafka:9092
