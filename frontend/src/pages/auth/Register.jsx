@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { AuthContext } from "../context/AuthContext.jsx";
+import { AuthContext } from "../../context/AuthContext.jsx";
 import { Eye, EyeOff, Mail, Lock, User, ShieldCheck, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 

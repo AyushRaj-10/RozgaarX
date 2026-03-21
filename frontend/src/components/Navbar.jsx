@@ -1,4 +1,4 @@
-import React from "react";
+
 import { ShieldCheck, Menu } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -159,14 +159,6 @@ const Navbar = () => {
               <ShieldCheck size={18} color="#020d1a" />
             </div>
             <span className="nav-logo-name">RozgaarX</span>
-          </div>
-
-          {/* Links */}
-          <div className="nav-links">
-            <span className="nav-link">Jobs</span>
-            <span className="nav-link">Companies</span>
-            <span className="nav-link">About</span>
-            <span className="nav-link">Contact</span>
           </div>
 
           {/* Actions */}
