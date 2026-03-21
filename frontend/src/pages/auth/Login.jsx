@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import AuthContext from "../context/AuthContext.jsx";
+import AuthContext from "../../context/AuthContext.jsx";
 import { Mail, Lock, Eye, EyeOff, ShieldCheck, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -18,21 +18,31 @@ const Login = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    try {
-      await loginUser(formData.email, formData.password);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  console.log("Form submitted");
+
+  setLoading(true);
+  setError(null);
+
+  try {
+    const data = await loginUser(formData.email, formData.password);
+
+    if (data?.user) {
       console.log("Login successful");
       navigate("/");
-    } catch (err) {
-      setError("Login failed. Please try again.");
-      console.error(err);
-    } finally {
-      setLoading(false);
     }
-  };
+
+    
+  } catch (err) {
+    console.log("Catch block")
+    setError(err.message);
+    console.error(err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <>
