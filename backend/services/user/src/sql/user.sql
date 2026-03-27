@@ -18,3 +18,24 @@ CREATE TABLE user_actions (
     details TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Update experience type
+ALTER TABLE users 
+ALTER COLUMN experience_years TYPE VARCHAR(20);
+
+-- Add new columns
+ALTER TABLE users
+ADD COLUMN current_company VARCHAR(100),
+ADD COLUMN bio TEXT,
+ADD COLUMN location VARCHAR(100),
+ADD COLUMN work_type VARCHAR(20),
+ADD COLUMN salary_min INT,
+ADD COLUMN salary_max INT,
+ADD COLUMN open_to_roles TEXT[],
+ADD COLUMN notice_period VARCHAR(20),
+ADD COLUMN linkedin VARCHAR(255),
+ADD COLUMN portfolio VARCHAR(255);
+
+-- Improve skills column
+ALTER TABLE users
+ALTER COLUMN skills TYPE TEXT[] USING string_to_array(skills, ',');
