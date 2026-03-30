@@ -16,8 +16,7 @@ export const verifyToken =
 
  }
 
- const token =
- header.split(" ")[1];
+const token = req.headers.authorization?.split(" ")[1];
 
  try{
 

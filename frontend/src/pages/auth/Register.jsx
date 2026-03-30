@@ -34,7 +34,7 @@ const Register = () => {
     try {
       await createUser(formData);
       console.log("User registered successfully");
-      navigate("/");
+      navigate("/setup");
     } catch (err) {
       setError("Registration failed. Please try again.");
       console.error(err);

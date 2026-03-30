@@ -439,7 +439,7 @@ const Home = () => {
           </h1>
 
           <p className={`hero-sub fade-up delay-2 ${heroVisible ? "visible" : ""}`}>
-            Recruitly connects world-class talent with the companies building tomorrow. AI-powered matching. Zero friction.
+            RozgaarX connects world-class talent with the companies building tomorrow. AI-powered matching. Zero friction.
           </p>
 
           <div className={`hero-ctas fade-up delay-3 ${heroVisible ? "visible" : ""}`}>
@@ -565,7 +565,7 @@ const Home = () => {
               {[
                 { n: "01", title: "Create your profile", desc: "Build a rich profile in under 5 minutes. Import from LinkedIn or fill in as you go." },
                 { n: "02", title: "Get matched by AI", desc: "Our engine analyses 200+ signals to surface the right roles or candidates for you." },
-                { n: "03", title: "Connect instantly", desc: "Message, schedule, and interview — all inside Recruitly with zero back-and-forth." },
+                { n: "03", title: "Connect instantly", desc: "Message, schedule, and interview — all inside RozgaarX with zero back-and-forth." },
                 { n: "04", title: "Land the offer", desc: "Negotiate, sign, and onboard — we're with you every step of the way." },
               ].map((s, i) => (
                 <div className={`how-step fade-up delay-${i+1} ${howVisible ? "visible" : ""}`} key={i}>
@@ -606,16 +606,16 @@ const Home = () => {
           <div className="container">
             <div className={`section-header fade-up ${testVisible ? "visible" : ""}`}>
               <div className="chip"><span className="chip-dot" /> Testimonials</div>
-              <h2 className="section-title">People love<br />Recruitly.</h2>
+              <h2 className="section-title">People love<br />RozgaarX.</h2>
             </div>
             <div className="test-grid">
               {[
                 { avatar:"SK", name:"Sneha K.", role:"Senior Engineer, Bangalore", quote:"I applied to 3 roles on a Monday and had 2 interviews by Wednesday. The AI matching is genuinely scary good.", bg:"135deg, #00e896, #007bff" },
                 { avatar:"RT", name:"Rohan T.", role:"Head of Talent, Zepto", quote:"We cut our time-to-hire by 40% in the first month. The candidate quality is miles ahead of anything we used before.", bg:"135deg, #ff6b6b, #ffd93d" },
                 { avatar:"PM", name:"Priya M.", role:"Product Manager, Razorpay", quote:"The profile builder is slick and the job recommendations actually make sense. First time a job board felt personal.", bg:"135deg, #a78bfa, #00e896" },
-                { avatar:"AJ", name:"Arjun J.", role:"Founding Engineer, Stealth", quote:"Landed my dream role through Recruitly. The whole process — from match to offer — took 11 days.", bg:"135deg, #f97316, #ef4444" },
+                { avatar:"AJ", name:"Arjun J.", role:"Founding Engineer, Stealth", quote:"Landed my dream role through RozgaarX. The whole process — from match to offer — took 11 days.", bg:"135deg, #f97316, #ef4444" },
                 { avatar:"DV", name:"Divya V.", role:"TA Lead, Meesho", quote:"Our recruiters use it daily. The dashboard is clean, the filters are powerful, and support is actually responsive.", bg:"135deg, #06b6d4, #0284c7" },
-                { avatar:"NS", name:"Nikhil S.", role:"CTO, Series B Startup", quote:"We've hired 14 people through Recruitly this year. The platform just keeps getting better every quarter.", bg:"135deg, #84cc16, #059669" },
+                { avatar:"NS", name:"Nikhil S.", role:"CTO, Series B Startup", quote:"We've hired 14 people through RozgaarX this year. The platform just keeps getting better every quarter.", bg:"135deg, #84cc16, #059669" },
               ].map((t, i) => (
                 <div className={`test-card fade-up delay-${(i%3)+1} ${testVisible ? "visible" : ""}`} key={i}>
                   <div className="test-stars">★★★★★</div>
@@ -637,7 +637,7 @@ const Home = () => {
         <div ref={ctaRef}>
           <div className={`cta-section fade-up ${ctaVisible ? "visible" : ""}`}>
             <h2 className="cta-title">Ready to find your<br /><span style={{color:"var(--teal)"}}>next opportunity?</span></h2>
-            <p className="cta-sub">Join 50,000+ professionals already using Recruitly to build their careers.</p>
+            <p className="cta-sub">Join 50,000+ professionals already using RozgaarX to build their careers.</p>
             <div className="cta-btns">
               <button className="btn-primary" style={{fontSize:15, padding:"16px 40px"}}>Get Started Free →</button>
               <button className="btn-ghost" style={{padding:"16px 28px"}}>Talk to Sales</button>
@@ -648,13 +648,13 @@ const Home = () => {
         {/* ═══════════════ FOOTER ═══════════════ */}
         <footer className="footer">
           <div className="footer-inner">
-            <div className="footer-logo">Recruitly</div>
+            <div className="footer-logo">RozgaarX</div>
             <div className="footer-links">
               {["About","Careers","Blog","Privacy","Terms"].map(l => (
                 <a href="#" className="footer-link" key={l}>{l}</a>
               ))}
             </div>
-            <div className="footer-copy">© 2026 Recruitly Inc.</div>
+            <div className="footer-copy">© 2026 RozgaarX Inc.</div>
           </div>
         </footer>
       </div>
