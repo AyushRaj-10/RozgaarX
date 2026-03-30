@@ -31,6 +31,10 @@ router.use(
     target: SERVICES.USER,
     changeOrigin: true,
     pathRewrite: { "": "/api/v1/user" },
+
+    onProxyReq: (proxyReq, req) => {
+      proxyReq.setHeader("Authorization", req.headers.authorization);
+    },
   })
 );
 

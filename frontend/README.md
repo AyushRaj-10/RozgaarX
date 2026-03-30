@@ -1,16 +1,25 @@
-# React + Vite
+# Frontend (Job Platform)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React 18 + Vite application for the Job Platform: marketing-style home page, login, and registration, styled with Tailwind CSS.
 
-Currently, two official plugins are available:
+## Documentation
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Project-wide architecture, ports, Docker setup, and environment variables are documented in the **[repository root README](../README.md)**.
 
-## React Compiler
+## Local development
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+npm install
+npm run dev
+```
 
-## Expanding the ESLint configuration
+Optional: set `VITE_BACKEND_URL` in `.env` to the API gateway (default `http://localhost:8084`). See the root README.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Scripts
+
+- `npm run dev` — start Vite dev server  
+- `npm run build` — production build  
+- `npm run preview` — preview the production build  
+- `npm run lint` — run ESLint  
+
+This app was bootstrapped with Vite’s React template; stack details and plugins are listed in `package.json`.

@@ -25,7 +25,12 @@ export const AuthProvider = ({ children }) => {
       console.log(data);
 
       localStorage.setItem("user", JSON.stringify(data));
+      localStorage.setItem("authId", user.id);
       setUser(data);
+      localStorage.setItem("token", data.token);
+      setToken(data.token);
+      localStorage.setItem("isRecruiter", data.user.role === "recruiter");
+      setisRecruiter(data.user.role === "recruiter");
 
       return data;
     } catch (error) {
@@ -55,6 +60,11 @@ export const AuthProvider = ({ children }) => {
       if (data.user) {
         setUser(data.user);
         localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("authId", user.id);
+        localStorage.setItem("token", data.token);
+        setToken(data.token);
+        localStorage.setItem("isRecruiter", data.user.role === "recruiter"); 
+        setisRecruiter(data.user.role === "recruiter");
       } else {
         setUser({ email });
       }
