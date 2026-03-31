@@ -10,32 +10,37 @@ export const AuthProvider = ({ children }) => {
     JSON.parse(localStorage.getItem("user")) || null,
   );
   const [token, setToken] = useState(localStorage.getItem("token") || null);
-  const [isRecruiter, setisRecruiter] = useState(false);
+
+  // ✅ FIX: Read isRecruiter from localStorage so it survives page refresh
+  const [isRecruiter, setIsRecruiter] = useState(
+    localStorage.getItem("isRecruiter") === "true",
+  );
 
   // ✅ REGISTER
   const createUser = async (formData) => {
     try {
       const res = await axios.post(`${url}/auth/register`, formData, {
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
       });
 
       const data = res.data;
       console.log(data);
 
-      localStorage.setItem("user", JSON.stringify(data));
-      localStorage.setItem("authId", user.id);
-      setUser(data);
+      localStorage.setItem("user", JSON.stringify(data.user ?? data));
+      // ✅ FIX: use data.user?.id or data.id — not user.id (state not set yet)
+      localStorage.setItem("authId", data.user?.id ?? data.id ?? "");
+      setUser(data.user ?? data);
+
       localStorage.setItem("token", data.token);
       setToken(data.token);
-      localStorage.setItem("isRecruiter", data.user.role === "recruiter");
-      setisRecruiter(data.user.role === "recruiter");
+
+      const recruiterFlag = data.user?.role === "recruiter";
+      localStorage.setItem("isRecruiter", recruiterFlag);
+      setIsRecruiter(recruiterFlag);
 
       return data;
     } catch (error) {
       console.error("REGISTER ERROR:", error.response?.data || error.message);
-
       return null;
     }
   };
@@ -43,35 +48,33 @@ export const AuthProvider = ({ children }) => {
   // ✅ LOGIN
   const loginUser = async (email, password) => {
     console.log("➡️ login() called with email:", email);
-    alert("THIS VERSION IS RUNNING");
     try {
       const res = await axios.post(
         `${url}/auth/login`,
         { email, password },
-        {
-          headers: { "Content-Type": "application/json" },
-        },
+        { headers: { "Content-Type": "application/json" } },
       );
 
       const data = res.data;
-
       console.log("✅ Login API response:", data);
 
       if (data.user) {
         setUser(data.user);
         localStorage.setItem("user", JSON.stringify(data.user));
-        localStorage.setItem("authId", user.id);
+        // ✅ FIX: use data.user.id — not user.id (stale state reference)
+        localStorage.setItem("authId", data.user.id ?? "");
         localStorage.setItem("token", data.token);
         setToken(data.token);
-        localStorage.setItem("isRecruiter", data.user.role === "recruiter"); 
-        setisRecruiter(data.user.role === "recruiter");
+
+        const recruiterFlag = data.user.role === "recruiter";
+        localStorage.setItem("isRecruiter", recruiterFlag);
+        setIsRecruiter(recruiterFlag);
       } else {
         setUser({ email });
       }
 
       return data;
     } catch (err) {
-      const msg = err.response?.data?.message || "❌ Login failed";
       console.error("❌ Login error:", err.response?.data || err.message);
       throw err;
     } finally {
@@ -79,15 +82,22 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // ✅ FIX: axiox → axios typo fixed; also clear isRecruiter on logout
   const logout = async () => {
     try {
-      const res = await axiox.post(`${url}/auth/logout`);
-      console.log("Logging Out");
+      await axios.post(`${url}/auth/logout`);
+    } catch (error) {
+      // Logout locally even if server call fails
+      console.warn("Logout API failed, clearing session locally.");
+    } finally {
       localStorage.removeItem("user");
       localStorage.removeItem("token");
+      localStorage.removeItem("authId");
+      localStorage.removeItem("isRecruiter");
       setUser(null);
       setToken(null);
-    } catch (error) {}
+      setIsRecruiter(false);
+    }
   };
 
   return (
@@ -96,6 +106,8 @@ export const AuthProvider = ({ children }) => {
         user,
         setUser,
         token,
+        isRecruiter,   
+        logout,        
         createUser,
         loginUser,
       }}

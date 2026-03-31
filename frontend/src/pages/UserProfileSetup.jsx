@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { userContext } from "../context/UserContext.jsx";
+import { userContext } from "../context/UserContext.jsx"
 import { useNavigate } from "react-router-dom";
 
 function useInView(threshold = 0.15) {
