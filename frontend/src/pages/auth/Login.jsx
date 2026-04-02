@@ -31,7 +31,7 @@ const handleSubmit = async (e) => {
 
     if (data?.user) {
       console.log("Login successful");
-      navigate("/");
+      navigate("/dashboard");
     }
 
     

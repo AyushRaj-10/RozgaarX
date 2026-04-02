@@ -45,6 +45,10 @@ router.use(
     target: SERVICES.JOBS,
     changeOrigin: true,
     pathRewrite: { "": "/api/v1/jobs" },
+
+    onProxyReq: (proxyReq, req) => {
+      proxyReq.setHeader("Authorization", req.headers.authorization);
+    },
   })
 );
 
