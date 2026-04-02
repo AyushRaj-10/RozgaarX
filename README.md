@@ -95,6 +95,46 @@ The notification service is primarily a **Kafka consumer**; it exposes minimal H
 
 ---
 
+## Current project status
+
+### Implementation snapshot
+
+| Area | Status | Notes |
+|------|--------|-------|
+| Frontend shell and auth flow | In progress | Home, register, login, profile setup, candidate dashboard pages are wired in the router. |
+| Recruiter workflow UI | In progress | Post job and applicants pages are present in routes. |
+| API gateway | Active | Reverse proxy, JWT verification on protected groups, Swagger docs endpoint. |
+| Auth service | Active | Register/login/logout/profile, JWT issuance, role support (`user`/`recruiter`). |
+| User service | Active | Profile CRUD by `auth_id`, Redis-backed read caching. |
+| Jobs service | Active | List/search/get/create/update/delete jobs, recruiter-only write access, Redis caching. |
+| Application service | Active | Apply/list/filter/status update, recruiter-only status mutation, Redis caching. |
+| Notification service | Active | Kafka consumer for `user.created`, `job.created`, `application.created` events; email dispatch integration. |
+| Infra (Docker Compose) | Active | Postgres, Redis, Zookeeper, Kafka, all backend services and gateway included. |
+
+### Architecture status view
+
+```mermaid
+flowchart TB
+  FE[Frontend SPA] --> GW[Gateway]
+  GW --> AUTH[Auth Service]
+  GW --> USER[User Service]
+  GW --> JOBS[Jobs Service]
+  GW --> APP[Application Service]
+  AUTH --> PG[(PostgreSQL)]
+  USER --> PG
+  JOBS --> PG
+  APP --> PG
+  USER --> REDIS[(Redis)]
+  JOBS --> REDIS
+  APP --> REDIS
+  AUTH --> KAFKA[(Kafka)]
+  JOBS --> KAFKA
+  APP --> KAFKA
+  KAFKA --> NOTIF[Notification Service]
+```
+
+---
+
 ## Tech stack
 
 ### Frontend (`frontend/`)
@@ -287,6 +327,12 @@ If unset, the app defaults to `http://localhost:8084` (see `frontend/src/context
 | `/` | Home / landing |
 | `/login` | Login |
 | `/register` | Register |
+| `/setup` | User profile setup |
+| `/dashboard` | User dashboard |
+| `/applications` | My applications |
+| `/jobs` | Browse jobs |
+| `/post-job` | Recruiter: post job |
+| `/applicants` | Recruiter: applicants view |
 
 ---
 

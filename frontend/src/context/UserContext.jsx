@@ -14,7 +14,7 @@ export const UserProvider = ({ children }) => {
             const res = await axios.post(`${url}/users`, formData, { 
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
+                    Authorization: `Bearer ${token}`
                 }
             });
             console.log(token)
@@ -28,7 +28,13 @@ export const UserProvider = ({ children }) => {
 
     const getUserProfile = async (id) => {
         try {
-            const res = await axios.get(`${url}/users/${id}`);
+             const token = localStorage.getItem("token");
+            const res = await axios.get(`${url}/users/${id}`,{
+        headers : {
+            Authorization: `Bearer ${token}`  
+        }
+    }
+            );
             const data = res.data;
             console.log(data);
             return data;
@@ -44,7 +50,7 @@ export const UserProvider = ({ children }) => {
             const res = await axios.put(`${url}/users/${id}`, formData, {
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
+                    Authorization: `Bearer ${token}`
                 }
             });
            
@@ -58,7 +64,13 @@ export const UserProvider = ({ children }) => {
 
     const deleteUser = async (id) => {
         try {
-            const res = await axios.delete(`${url}/users/${id}`);
+             const token = localStorage.getItem("token");
+            const res = await axios.delete(`${url}/users/${id}`,{
+        headers : {
+            Authorization: `Bearer ${token}`  
+        }
+    }
+            );
             const data = res.data;
             console.log(data);
             return data;
